@@ -66,7 +66,11 @@ export const Footer = () => {
       <div className="border-t border-border">
         <div className="container py-6 flex flex-col sm:flex-row gap-4 items-center justify-between text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} VORQIX.AI — All rights reserved.</p>
-          <p>vorqix.ai · Building the future of intelligent business.</p>
+          <div className="flex items-center gap-5">
+            <Link to="/privacy" className="hover:text-foreground">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-foreground">Terms</Link>
+            <Link to="/contact" className="hover:text-foreground">Contact</Link>
+          </div>
         </div>
       </div>
     </footer>
