@@ -5,17 +5,19 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-
-const posts = [
-  { tag: "AI Strategy", date: "Jun 18, 2026", title: "The new AI-first operating model for modern businesses", excerpt: "How leading teams are restructuring around AI agents and automation pipelines.", read: "8 min" },
-  { tag: "Engineering", date: "Jun 10, 2026", title: "Building production-grade AI agents that don't hallucinate", excerpt: "Architectural patterns we use to ship reliable agents into enterprise environments.", read: "12 min" },
-  { tag: "Case Study", date: "May 28, 2026", title: "How we cut dispatch operations by 70% for a 1,200-vehicle fleet", excerpt: "Inside the AI dispatch system we built — and the results six months in.", read: "10 min" },
-  { tag: "SaaS", date: "May 14, 2026", title: "The 9-week SaaS sprint: what actually ships", excerpt: "A breakdown of our high-velocity SaaS engagement and what it produces.", read: "6 min" },
-  { tag: "Product", date: "Apr 30, 2026", title: "Why we built Vorqix Flow", excerpt: "The vision behind our flagship AI workflow platform.", read: "5 min" },
-  { tag: "Industry", date: "Apr 12, 2026", title: "AI agents in logistics: state of the industry 2026", excerpt: "Where the industry stands and where the real opportunities live.", read: "11 min" },
-];
+import { useState } from "react";
+import { posts } from "@/data/posts";
+import { useSEO } from "@/hooks/use-seo";
 
 const Blog = () => {
+  useSEO({
+    title: "Blog — AI, automation & SaaS insights | VORQIX.AI",
+    description: "Essays, case studies, and field notes on AI automation, agents, SaaS development, and business growth from the VORQIX.AI team.",
+    path: "/blog",
+  });
+  const tags = ["All", ...Array.from(new Set(posts.map((p) => p.tag)))];
+  const [tag, setTag] = useState("All");
+  const filtered = tag === "All" ? posts : posts.filter((p) => p.tag === tag);
   const subscribe = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
@@ -27,9 +29,24 @@ const Blog = () => {
     <>
       <section className="container py-24">
         <SectionHeader eyebrow="Blog" title="Thought leadership for the AI era" description="Essays, case studies, and field notes from the VORQIX.AI team." />
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
+          {tags.map((t) => (
+            <button
+              key={t}
+              onClick={() => setTag(t)}
+              className={`px-4 py-2 rounded-full text-xs font-medium border transition-all ${
+                tag === t
+                  ? "bg-gradient-primary text-primary-foreground border-transparent"
+                  : "glass border-border text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((p) => (
-            <Card key={p.title} className="overflow-hidden bg-card/60 border-border hover:border-primary/40 transition-all group">
+          {filtered.map((p) => (
+            <Card key={p.slug} className="overflow-hidden bg-card/60 border-border hover:border-primary/40 transition-all group">
               <div className="aspect-[16/9] bg-gradient-to-br from-primary/20 via-accent/10 to-transparent grid-bg" />
               <div className="p-6">
                 <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
@@ -39,7 +56,7 @@ const Blog = () => {
                 </div>
                 <h3 className="font-display text-xl font-semibold mb-2 group-hover:text-primary transition-colors">{p.title}</h3>
                 <p className="text-sm text-muted-foreground mb-4">{p.excerpt}</p>
-                <Link to="#" className="inline-flex items-center gap-1 text-sm text-primary">Read article <ArrowRight className="h-4 w-4" /></Link>
+                <Link to={`/blog/${p.slug}`} className="inline-flex items-center gap-1 text-sm text-primary">Read article <ArrowRight className="h-4 w-4" /></Link>
               </div>
             </Card>
           ))}
